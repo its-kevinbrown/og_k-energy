@@ -69,9 +69,9 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #818491;
+  color: #00030f;
   text-align: left;
-  background-color: #ffffff;
+  background-color:#f8fafcec;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -391,7 +391,7 @@ h6,
   font-family: "Roboto", sans-serif;
   font-weight: 500;
   line-height: 1.2;
-  color: #22395d;
+  color: #492904;
 }
 
 h1,
