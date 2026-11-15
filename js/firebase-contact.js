@@ -2,6 +2,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 
 import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app-check.js";
+
+import {
   getFirestore,
   collection,
   addDoc,
@@ -20,6 +25,16 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase App Check
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider(
+    "6Lci4SAuAAAAADu6BP115FA5zNnXlgdhNAgfPCHy"
+  ),
+  isTokenAutoRefreshEnabled: true
+});
+
+// Initialize Firestore
 const db = getFirestore(app);
 
 // Connect the contact form
