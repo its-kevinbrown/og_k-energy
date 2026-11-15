@@ -65,30 +65,68 @@ if (!contactForm || !successMessage || !submitButton) {
     submitButton.textContent = "Sending...";
     successMessage.innerHTML = "";
 
-    try {
-      await addDoc(collection(db, "enquiries"), {
+    
+try {
+  // First, save the enquiry in Firebase
+  await addDoc(collection(db, "enquiries"), {
+    name,
+    email,
+    phone,
+    service,
+    message,
+    createdAt: serverTimestamp()
+  });
+
+  // Then send the email notification
+  let emailSent = false;
+
+  try {
+    const emailResponse = await fetch("/api/send-enquiry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
         name,
         email,
         phone,
         service,
-        message,
-        createdAt: serverTimestamp()
-      });
+        message
+      })
+    });
 
-      successMessage.innerHTML =
+    const emailResult = await emailResponse.json();
+
+    if (!emailResponse.ok) {
+      throw new Error(emailResult.error || "Email notification failed");
+    }
+
+    emailSent = true;
+
+    } catch (emailError) {
+        console.error("Email notification error:", emailError);
+    }
+
+    if (emailSent) {
+        successMessage.innerHTML =
         '<div class="alert alert-success">Thank you! Your enquiry has been received. Our team will contact you shortly.</div>';
+    } else {
+        successMessage.innerHTML =
+        '<div class="alert alert-success">Your enquiry has been received successfully. Our team will contact you shortly.</div>';
+    }
 
-      contactForm.reset();
+    contactForm.reset();
 
     } catch (error) {
-      console.error("Firebase submission error:", error);
+    console.error("Firebase submission error:", error);
 
-      successMessage.innerHTML =
-        '<div class="alert alert-danger">Sorry, your message could not be sent. Please try again.</div>';
+    successMessage.innerHTML =
+        '<div class="alert alert-danger">Sorry, your enquiry could not be saved. Please try again.</div>';
 
     } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = "Send Message";
+    submitButton.disabled = false;
+    submitButton.textContent = "Send Message";
     }
+
   });
 }
